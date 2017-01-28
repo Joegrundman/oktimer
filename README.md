@@ -8,27 +8,27 @@ Target use case: cooking
 
 Usage:
 
-voice "OK Timer"
-response "OK"
-voice "take cake out"
-voice "thirty minutes"
-voice "OK"
-response "take cake out thirty minutes"
-voice "OK"
-response "OK"
+voice _"OK Timer"_
+response _"OK"_
+voice _"take cake out"_
+voice _"thirty minutes"_
+voice _"OK"_
+response _"take cake out thirty minutes"_
+voice _"OK"_
+response _"OK"_
 
-voice "OK Timer"
-response "OK"
-voice "take cake out"
-voice "thirty minutes"
-voice "OK"
-response "take steak out forty minutes"
-voice "no"
-voice "take cake out"
-voice "thirty minutes"
-response "take cake out thirty minutes"
-voice "OK"
-response "OK"
+voice _"OK Timer"_
+response _"OK"_
+voice _"take cake out"_
+voice _"thirty minutes"_
+voice _"OK"_
+response _"take steak out forty minutes"_
+voice _"no"_
+voice _"take cake out"_
+voice _"thirty minutes"_
+response _"take cake out thirty minutes"_
+voice _"OK"_
+response _"OK"_
 
 Displays each timer still active
 When timer expires, app responds with message 
