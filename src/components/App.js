@@ -27,6 +27,7 @@ class App extends Component {
       status: this.STATUS.STANDBY
     }
     this.handleClose = this.handleClose.bind(this)
+    this.handleSpeechEvent = this.handleSpeechEvent.bind(this)
   }
 
   componentDidMount() {
@@ -39,6 +40,7 @@ class App extends Component {
   }
 
   handleSpeechEvent(e) {
+    console.log(this)
      if (this.state.status === this.STATUS.STANDBY) {
        this.detectOkTimer(e)
      } 
