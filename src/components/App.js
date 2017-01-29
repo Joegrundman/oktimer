@@ -10,7 +10,7 @@ class App extends Component {
 
     this.STATUS = {
       STANDBY : 'STATUS_STANDBY',
-      LISTENING: 'LISTENING'
+      LISTENING: 'STATUS_LISTENING'
     }
 
     const defaultTimers = ['eat', 'drink', 'fuck', 'shag sheep', 'drink schnapps', 'talk about submarines']
@@ -26,8 +26,10 @@ class App extends Component {
       timers: defaultTimersReady,
       status: this.STATUS.STANDBY
     }
+
     this.handleClose = this.handleClose.bind(this)
     this.handleSpeechEvent = this.handleSpeechEvent.bind(this)
+    this.detectOkTimer = this.detectOkTimer.bind(this)
   }
 
   componentDidMount() {
@@ -40,7 +42,6 @@ class App extends Component {
   }
 
   handleSpeechEvent(e) {
-    console.log(this)
      if (this.state.status === this.STATUS.STANDBY) {
        this.detectOkTimer(e)
      } 
@@ -57,8 +58,11 @@ class App extends Component {
 
       if(e.results[0].isFinal && transcript.toLowerCase() === ("ok timer")) {
           const msg = new SpeechSynthesisUtterance()
-          msg.text = "OK"
+          msg.text = "sup bitch?"
           speechSynthesis.speak(msg)
+          this.setState({
+            status: this.STATUS.LISTENING
+          })
         }
   }
 
@@ -67,12 +71,13 @@ class App extends Component {
           .map(result => result[0])
           .map(result => result.transcript)
           .join('')
+          console.log(transcript)
 
-      if(e.results[0].isFinal) {
-        if(isTimer(transcript)) {
+      // if(e.results[0].isFinal) {
+      //   if(isTimer(transcript)) {
 
-        }
-      }
+      //   }
+     // }
   }
 
   handleClose (target) {
