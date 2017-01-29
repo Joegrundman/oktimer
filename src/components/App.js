@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import Timer from './Timer'
-import { isTimer, parseTimer } from '../speechtimes'
+import { parseTimer } from '../speechtimes'
 import './App.css';
 
 class App extends Component {
@@ -10,21 +10,23 @@ class App extends Component {
 
     this.STATUS = {
       STANDBY : 'STATUS_STANDBY',
-      LISTENING: 'STATUS_LISTENING'
+      AWAIT_TIME: 'STATUS_AWAIT_TIME',
+      AWAIT_MSG: 'STATUS_AWAIT_MSG'
     }
 
-    const defaultTimers = ['eat', 'drink', 'fuck', 'shag sheep', 'drink schnapps', 'talk about submarines']
-    const defaultTimersReady = []
-    defaultTimers.forEach((defaultTimer, i) => {
-        defaultTimersReady.push({
-          name: defaultTimer,
-          timer: setTimeout(() => this.timeIsUp(defaultTimer), 10000 * (i + 1))
-        })
-    })
+    // const defaultTimers = ['eat', 'drink', 'fuck', 'shag sheep', 'drink schnapps', 'talk about submarines']
+    // const defaultTimersReady = []
+    // defaultTimers.forEach((defaultTimer, i) => {
+    //     defaultTimersReady.push({
+    //       name: defaultTimer,
+    //       timer: setTimeout(() => this.timeIsUp(defaultTimer), 10000 * (i + 1))
+    //     })
+    // })
 
     this.state = {
-      timers: defaultTimersReady,
-      status: this.STATUS.STANDBY
+      timers: [],
+      status: this.STATUS.STANDBY,
+      currentTime: 0
     }
 
     this.handleClose = this.handleClose.bind(this)
@@ -45,8 +47,10 @@ class App extends Component {
      if (this.state.status === this.STATUS.STANDBY) {
        this.detectOkTimer(e)
      } 
-     else if(this.state.status === this.STATUS.LISTENING){
+     else if(this.state.status === this.STATUS.AWAIT_TIME){
        this.parseMessage(e)
+     } else if(this.state.status === this.STATUS.AWAIT_MSG) {
+       this.takeMessageAndSetTimer(e)
      }
   }
 
@@ -57,11 +61,9 @@ class App extends Component {
           .join('')
 
       if(e.results[0].isFinal && transcript.toLowerCase() === ("ok timer")) {
-          const msg = new SpeechSynthesisUtterance()
-          msg.text = "sup bitch?"
-          speechSynthesis.speak(msg)
+          this.speak('sup bitch?')
           this.setState({
-            status: this.STATUS.LISTENING
+            status: this.STATUS.AWAIT_TIME
           })
         }
   }
@@ -71,13 +73,17 @@ class App extends Component {
           .map(result => result[0])
           .map(result => result.transcript)
           .join('')
-          console.log(transcript)
 
-      // if(e.results[0].isFinal) {
-      //   if(isTimer(transcript)) {
-
-      //   }
-     // }
+      if(e.results[0].isFinal) {
+        console.log(transcript)
+        let time =  parseTimer (transcript)
+        if(typeof time === 'number') {
+          this.setState({
+            currentTime: time,
+            status: this.STATUS.AWAIT_MSG
+          })
+        }
+     }
   }
 
   handleClose (target) {
@@ -87,8 +93,35 @@ class App extends Component {
     })
   }
 
+  speak (text){
+      const msg = new SpeechSynthesisUtterance()
+      msg.text = text
+      speechSynthesis.speak(msg)
+  }
+
+  takeMessageAndSetTimer(e) {
+      const transcript = Array.from(e.results)
+        .map(result => result[0])
+        .map(result => result.transcript)
+        .join('')
+
+      if(e.results[0].isFinal) {
+        console.log(transcript)
+        const newTimer = {
+          name: transcript,
+          timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime)
+        }
+        this.speak(transcript + ' ' + this.state.currentTime)
+        this.setState({
+          timers: [...this.state.timers, newTimer],
+          status: this.STATUS.STANDBY
+        })
+      }
+  }
+
   timeIsUp(name) {
     console.log('timer has expired:',name)
+    this.speak(name)
     const nextTimers = this.state.timers.filter(t => t.name !== name)
     this.setState({
       timers: nextTimers
