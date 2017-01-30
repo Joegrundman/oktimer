@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import Timer from './Timer'
+import Navbar from './Navbar'
 import { parseTimer } from '../modules/speech'
 import './App.css';
 
@@ -27,15 +27,26 @@ class App extends Component {
       timers: [],
       status: this.STATUS.STANDBY,
       currentTime: 0,
-      currentTimeMsg: ''
+      currentTimeMsg: '',
+      okResponseMsg: 'OK'
+
     }
 
-    this.handleClose = this.handleClose.bind(this)
+    this.handleCloseTimer = this.handleCloseTimer.bind(this)
     this.handleSpeechEvent = this.handleSpeechEvent.bind(this)
     this.detectOkTimer = this.detectOkTimer.bind(this)
+    this.setNewOkResponse = this.setNewOkResponse.bind(this)
   }
 
   componentDidMount() {
+      // load saved data from localStorage
+      const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer")) 
+
+      if(okTimerSavedData && okTimerSavedData.okResponseMsg) {
+        this.setState({
+          okResponseMsg: okTimerSavedData.okResponseMsg
+        })
+      }   
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
       this.recognition = new SpeechRecognition()
       this.recognition.interimResults = true
@@ -60,7 +71,7 @@ class App extends Component {
           .join('')
 
       if(e.results[0].isFinal && transcript.toLowerCase() === ("ok timer")) {
-          this.speak('sup bitch?')
+          this.speak(this.state.okResponseMsg)
           console.log('ready...')
           this.setState({
             status: this.STATUS.AWAIT_TIME
@@ -89,7 +100,7 @@ class App extends Component {
      }
   }
 
-  handleClose (target) {
+  handleCloseTimer (target) {
     const timers = this.state.timers.filter(t => timers !== t)
     this.setState({
       timers
@@ -122,6 +133,13 @@ class App extends Component {
       }
   }
 
+  setNewOkResponse(newMsg) {
+    this.setState({okResponseMsg: newMsg})
+    const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer"))
+    const newTimerData = {...okTimerSavedData, okResponseMsg: newMsg}
+    window.localStorage.setItem("OkTimer", JSON.stringify(newTimerData)) 
+  }
+
   timeIsUp(name) {
     console.log('timer has expired:',name)
     this.speak(name)
@@ -134,15 +152,12 @@ class App extends Component {
   render() {
 
     const timers = this.state.timers.map((t,i) => (
-      <Timer key={i} onClose={this.handleClose}>{t.name}</Timer>
+      <Timer key={i} onClose={this.handleCloseTimer}>{t.name}</Timer>
       ))
 
     return (
       <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>OK Timer</h2>
-        </div>
+        <Navbar okResponseMsg={this.state.okResponseMsg} onSubmitNewOkResponseMsg={this.setNewOkResponse}/>
         <p className="App-intro">
           To start a new timer, say "OK Timer", then say the message and the time.
         </p>
