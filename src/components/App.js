@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import Timer from './Timer'
-import { parseTimer } from '../speechtimes'
+import { parseTimer } from '../modules/speech'
 import './App.css';
 
 class App extends Component {
@@ -26,7 +26,8 @@ class App extends Component {
     this.state = {
       timers: [],
       status: this.STATUS.STANDBY,
-      currentTime: 0
+      currentTime: 0,
+      currentTimeMsg: ''
     }
 
     this.handleClose = this.handleClose.bind(this)
@@ -44,14 +45,12 @@ class App extends Component {
   }
 
   handleSpeechEvent(e) {
-     if (this.state.status === this.STATUS.STANDBY) {
-       this.detectOkTimer(e)
-     } 
-     else if(this.state.status === this.STATUS.AWAIT_TIME){
-       this.parseMessage(e)
-     } else if(this.state.status === this.STATUS.AWAIT_MSG) {
-       this.takeMessageAndSetTimer(e)
-     }
+    switch(this.state.status) {
+      case this.STATUS.STANDBY: this.detectOkTimer(e); break
+      case this.STATUS.AWAIT_TIME: this.parseTime(e); break
+      case this.STATUS.AWAIT_MSG: this.takeMessageAndSetTimer(e); break;
+      default: this.detectOkTimer(e)
+    }
   }
 
   detectOkTimer(e) {
@@ -62,13 +61,14 @@ class App extends Component {
 
       if(e.results[0].isFinal && transcript.toLowerCase() === ("ok timer")) {
           this.speak('sup bitch?')
+          console.log('ready...')
           this.setState({
             status: this.STATUS.AWAIT_TIME
           })
         }
   }
 
-  parseMessage(e) {
+  parseTime(e) {
     const transcript = Array.from(e.results)
           .map(result => result[0])
           .map(result => result.transcript)
@@ -76,8 +76,11 @@ class App extends Component {
 
       if(e.results[0].isFinal) {
         console.log(transcript)
+        this.setState({
+          currentTimeMsg : transcript
+        })
         let time =  parseTimer (transcript)
-        if(typeof time === 'number') {
+        if(typeof time === 'number' && time > 0) {
           this.setState({
             currentTime: time,
             status: this.STATUS.AWAIT_MSG
@@ -111,7 +114,7 @@ class App extends Component {
           name: transcript,
           timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime)
         }
-        this.speak(transcript + ' ' + this.state.currentTime)
+        this.speak(transcript + ' ' + this.state.currentTimeMsg)
         this.setState({
           timers: [...this.state.timers, newTimer],
           status: this.STATUS.STANDBY
@@ -133,7 +136,7 @@ class App extends Component {
     const timers = this.state.timers.map((t,i) => (
       <Timer key={i} onClose={this.handleClose}>{t.name}</Timer>
       ))
-      
+
     return (
       <div className="App">
         <div className="App-header">
