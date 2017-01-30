@@ -1,21 +1,24 @@
 export function parseTimer (transcript) {
 
-    var parsed = transcript.split(' ').map(n => !isNaN(parseInt(n)) ? parseInt(n) : n)
+    var parsed = transcript.split(' ').map(n => !isNaN(parseInt(n, 10)) ? parseInt(n, 10) : n)
 
     console.log(parsed)
 
     let time = 0
+    let tmp = 0
     parsed.forEach((t, i, arr) => {
         if(typeof t === 'number') {
-            time = t
+            tmp = t
         } else {
             if( t === "seconds" || t === "second") {
-                time *= 1000
+                tmp *= 1000
             } else if ( t === "minutes" || t === "minute") {
-                time*= 60000
+                tmp*= 60000
             } else if ( t === "hours" || t === "hour" || t === "our" || t === "ours") {
-                time *= 3600000
+                tmp *= 3600000
             }
+            time += tmp
+            tmp = 0
         }
     })
     console.log('timer', time)
