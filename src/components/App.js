@@ -49,7 +49,7 @@ class App extends Component {
       case this.STATUS.STANDBY: this.detectOkTimer(e); break
       case this.STATUS.AWAIT_TIME: this.parseTime(e); break
       case this.STATUS.AWAIT_MSG: this.takeMessageAndSetTimer(e); break;
-      default: this.detectOkTimer(e)
+      default: this.detectOkTimer(e); break
     }
   }
 

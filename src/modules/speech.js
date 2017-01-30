@@ -9,6 +9,10 @@ export function parseTimer (transcript) {
     parsed.forEach((t, i, arr) => {
         if(typeof t === 'number') {
             tmp = t
+        } else if (t === 'five') {
+            tmp = 5
+        } else if (t === 'one') {
+            tmp = 1
         } else {
             if( t === "seconds" || t === "second") {
                 tmp *= 1000
