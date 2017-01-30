@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Timer from './Timer'
 import Navbar from './Navbar'
-import { parseTimer } from '../modules/speech'
+import { parseTimer, speak } from '../modules/speech'
 import './App.css';
 
 class App extends Component {
@@ -13,15 +13,6 @@ class App extends Component {
       AWAIT_TIME: 'STATUS_AWAIT_TIME',
       AWAIT_MSG: 'STATUS_AWAIT_MSG'
     }
-
-    // const defaultTimers = ['eat', 'drink', 'fuck', 'shag sheep', 'drink schnapps', 'talk about submarines']
-    // const defaultTimersReady = []
-    // defaultTimers.forEach((defaultTimer, i) => {
-    //     defaultTimersReady.push({
-    //       name: defaultTimer,
-    //       timer: setTimeout(() => this.timeIsUp(defaultTimer), 10000 * (i + 1))
-    //     })
-    // })
 
     this.state = {
       timers: [],
@@ -71,7 +62,7 @@ class App extends Component {
           .join('')
 
       if(e.results[0].isFinal && transcript.toLowerCase() === ("ok timer")) {
-          this.speak(this.state.okResponseMsg)
+          speak(this.state.okResponseMsg)
           console.log('ready...')
           this.setState({
             status: this.STATUS.AWAIT_TIME
@@ -107,11 +98,7 @@ class App extends Component {
     })
   }
 
-  speak (text){
-      const msg = new SpeechSynthesisUtterance()
-      msg.text = text
-      speechSynthesis.speak(msg)
-  }
+
 
   takeMessageAndSetTimer(e) {
       const transcript = Array.from(e.results)
@@ -125,7 +112,7 @@ class App extends Component {
           name: transcript,
           timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime)
         }
-        this.speak(transcript + ' ' + this.state.currentTimeMsg)
+        speak(transcript + ' ' + this.state.currentTimeMsg)
         this.setState({
           timers: [...this.state.timers, newTimer],
           status: this.STATUS.STANDBY
@@ -142,7 +129,7 @@ class App extends Component {
 
   timeIsUp(name) {
     console.log('timer has expired:',name)
-    this.speak(name)
+    speak(name)
     const nextTimers = this.state.timers.filter(t => t.name !== name)
     this.setState({
       timers: nextTimers

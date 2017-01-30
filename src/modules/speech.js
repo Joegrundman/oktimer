@@ -28,3 +28,9 @@ export function parseTimer (transcript) {
     console.log('timer', time)
     return time
 }
+
+export function speak (text){
+    const msg = new SpeechSynthesisUtterance()
+    msg.text = text
+    speechSynthesis.speak(msg)
+}
