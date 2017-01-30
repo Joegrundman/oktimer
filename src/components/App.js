@@ -133,6 +133,7 @@ class App extends Component {
     const timers = this.state.timers.map((t,i) => (
       <Timer key={i} onClose={this.handleClose}>{t.name}</Timer>
       ))
+      
     return (
       <div className="App">
         <div className="App-header">
