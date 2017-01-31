@@ -2,7 +2,7 @@
   "name": "oktimer",
   "version": "0.0.1",
   "private": true,
-  "homepage": "joegrundman.github.io/oktimer/",
+  "homepage": "htpps://joegrundman.github.io/oktimer/",
   "devDependencies": {
     "gh-pages": "^0.12.0",
     "react-scripts": "0.8.5"
