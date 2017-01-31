@@ -95,10 +95,20 @@ class App extends Component {
   }
 
   handleCloseTimer (target) {
-    const timers = this.state.timers.filter(t => timers !== t)
-    this.setState({
-      timers
-    })
+    console.log('closing', target)
+    
+    const timers = this.state.timers
+      .map(t => {
+        if(t.name === target) {
+          clearTimeout(t.timer)
+        }
+        return t
+      })
+      .filter(t => t.name !== target)
+
+      this.setState({
+        timers
+      })
   }
 
   setNewOkResponse(newMsg) {
@@ -151,7 +161,12 @@ class App extends Component {
     }
 
     const timers = this.state.timers.map((t,i) => (
-      <Timer key={i} onClose={this.handleCloseTimer} name={t.name} timeMsg={t.timeMsg}/>
+      <Timer 
+        key={i} 
+        onClose={this.handleCloseTimer} 
+        name={t.name} 
+        timeMsg={t.timeMsg} 
+        cancelTimer={() => this.handleCloseTimer(t.name)} />
       ))
 
     return (
