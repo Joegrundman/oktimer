@@ -9,7 +9,7 @@ class OkResponseDialog extends Component {
         const actions = [
             <FlatButton
                 label="Cancel"
-                primary={true}
+                secondary={true}
                 onTouchTap={this.props.handleClose}
             />,
             <FlatButton

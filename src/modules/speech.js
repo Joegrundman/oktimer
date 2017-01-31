@@ -29,8 +29,14 @@ export function parseTimer (transcript) {
     return time
 }
 
-export function speak (text){
+export function speak (text, cb){
     const msg = new SpeechSynthesisUtterance()
+    const synth = window.speechSynthesis
     msg.text = text
-    speechSynthesis.speak(msg)
+    synth.speak(msg)
+
+    msg.onend = (e) => {
+        console.log('ENDED with elapsed time', e.elapsedTime)
+        // cb(e)
+    }
 }

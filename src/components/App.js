@@ -20,7 +20,6 @@ class App extends Component {
       currentTime: 0,
       currentTimeMsg: '',
       okResponseMsg: 'OK'
-
     }
 
     this.handleCloseTimer = this.handleCloseTimer.bind(this)
@@ -49,7 +48,7 @@ class App extends Component {
   handleSpeechEvent(e) {
     switch(this.state.status) {
       case this.STATUS.STANDBY: this.detectOkTimer(e); break
-      case this.STATUS.AWAIT_TIME: this.parseTime(e); break
+      case this.STATUS.AWAIT_TIME: this.detectTime(e); break
       case this.STATUS.AWAIT_MSG: this.takeMessageAndSetTimer(e); break;
       default: this.detectOkTimer(e); break
     }
@@ -70,7 +69,7 @@ class App extends Component {
         }
   }
 
-  parseTime(e) {
+  detectTime(e) {
     const transcript = Array.from(e.results)
           .map(result => result[0])
           .map(result => result.transcript)
@@ -83,10 +82,11 @@ class App extends Component {
         })
         let time =  parseTimer (transcript)
         if(typeof time === 'number' && time > 0) {
-          this.setState({
-            currentTime: time,
-            status: this.STATUS.AWAIT_MSG
-          })
+          speak(transcript, this.setState({
+              currentTime: time,
+              status: this.STATUS.AWAIT_MSG
+            })
+          )
         }
      }
   }
@@ -98,7 +98,12 @@ class App extends Component {
     })
   }
 
-
+  setNewOkResponse(newMsg) {
+    this.setState({okResponseMsg: newMsg})
+    const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer"))
+    const newTimerData = {...okTimerSavedData, okResponseMsg: newMsg}
+    window.localStorage.setItem("OkTimer", JSON.stringify(newTimerData)) 
+  }
 
   takeMessageAndSetTimer(e) {
       const transcript = Array.from(e.results)
@@ -110,6 +115,7 @@ class App extends Component {
         console.log(transcript)
         const newTimer = {
           name: transcript,
+          timeMsg: this.state.currentTimeMsg,
           timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime)
         }
         speak(transcript + ' ' + this.state.currentTimeMsg)
@@ -118,13 +124,6 @@ class App extends Component {
           status: this.STATUS.STANDBY
         })
       }
-  }
-
-  setNewOkResponse(newMsg) {
-    this.setState({okResponseMsg: newMsg})
-    const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer"))
-    const newTimerData = {...okTimerSavedData, okResponseMsg: newMsg}
-    window.localStorage.setItem("OkTimer", JSON.stringify(newTimerData)) 
   }
 
   timeIsUp(name) {
@@ -138,13 +137,24 @@ class App extends Component {
 
   render() {
 
+    const bgCols = {
+      'STATUS_STANDBY' : '#ebe',
+      'STATUS_AWAIT_TIME' : '#bee',
+      'STATUS_AWAIT_MSG' : '#eeb'
+    }
+
+    const style={
+      backgroundColor: bgCols[this.state.status]
+    }
+
     const timers = this.state.timers.map((t,i) => (
-      <Timer key={i} onClose={this.handleCloseTimer}>{t.name}</Timer>
+      <Timer key={i} onClose={this.handleCloseTimer} name={t.name} timeMsg={t.timeMsg}/>
       ))
 
     return (
-      <div className="App">
+      <div className="App" style={style}>
         <Navbar okResponseMsg={this.state.okResponseMsg} onSubmitNewOkResponseMsg={this.setNewOkResponse}/>
+        <h5>Status:{this.state.status}</h5>
         <p className="App-intro">
           To start a new timer, say "OK Timer", then say the message and the time.
         </p>
