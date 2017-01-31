@@ -8,7 +8,6 @@ class Timer extends Component {
         return (
         <Card 
             className="Timer"
-            expandable={true}
             >
             <CardHeader
                 title={this.props.name}
