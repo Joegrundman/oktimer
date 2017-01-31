@@ -82,10 +82,13 @@ class App extends Component {
         })
         let time =  parseTimer (transcript)
         if(typeof time === 'number' && time > 0) {
+          this.recognition.stop()
+
           speak(transcript, this.setState({
               currentTime: time,
               status: this.STATUS.AWAIT_MSG
-            })
+            }//, this.recognition.start()
+            )
           )
         }
      }

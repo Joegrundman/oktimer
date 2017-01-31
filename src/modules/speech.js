@@ -37,6 +37,6 @@ export function speak (text, cb){
 
     msg.onend = (e) => {
         console.log('ENDED with elapsed time', e.elapsedTime)
-        // cb(e)
+        if(typeof cb === 'function') cb(e)
     }
 }
