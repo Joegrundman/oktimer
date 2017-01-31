@@ -27,6 +27,10 @@ class Navbar extends Component {
     }
 
     handleSubmit() {
+        if(this.state.currentTextField.trim() === ''){
+            this.handleClose()
+            return
+        }
         console.log('submitting', this.state.currentTextField)
         this.props.onSubmitNewOkResponseMsg(this.state.currentTextField)
         this.handleClose()
