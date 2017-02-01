@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import Timer from './Timer'
 import Navbar from './Navbar'
+import NoInternet from './NoInternet'
 import { parseTimer, speak } from '../modules/speech'
 import './App.css';
 
 class App extends Component {
-  constructor(props){
+  constructor(props: any){
     super(props)
 
     this.STATUS = {
@@ -19,7 +20,8 @@ class App extends Component {
       status: this.STATUS.STANDBY,
       currentTime: 0,
       currentTimeMsg: '',
-      okResponseMsg: 'OK'
+      okResponseMsg: 'OK',
+      isOnline: true
     }
 
     this.handleCloseTimer = this.handleCloseTimer.bind(this)
@@ -29,8 +31,12 @@ class App extends Component {
   }
 
   componentDidMount() {
+      // detect online status
+      window.addEventListener('online', () => this.setState({isOnline: true}))
+      window.addEventListener('offline', () => this.setState({isOnline: false}))
+
       // load saved data from localStorage
-      const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer")) 
+      const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer")) || null
 
       if(okTimerSavedData && okTimerSavedData.okResponseMsg) {
         this.setState({
@@ -39,6 +45,7 @@ class App extends Component {
       }   
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
       this.recognition = new SpeechRecognition()
+
       this.recognition.interimResults = true
       this.recognition.addEventListener('result', this.handleSpeechEvent)
       this.recognition.addEventListener('end', this.recognition.start)
@@ -82,8 +89,7 @@ class App extends Component {
         })
         let time =  parseTimer (transcript)
         if(typeof time === 'number' && time > 0) {
-          this.recognition.stop()
-
+          // this.recognition.stop()
           speak(transcript, this.setState({
               currentTime: time,
               status: this.STATUS.AWAIT_MSG
@@ -126,16 +132,25 @@ class App extends Component {
 
       if(e.results[0].isFinal) {
         console.log(transcript)
-        const newTimer = {
-          name: transcript,
-          timeMsg: this.state.currentTimeMsg,
-          timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime)
+
+        if (transcript === 'no') {
+          // go back if time is incorrect and await a new time
+          this.setState({
+            status: this.STATUS.AWAIT_TIME
+          })
+        } else {
+          // proceed with creating new timer object
+          const newTimer = {
+            name: transcript,
+            timeMsg: this.state.currentTimeMsg,
+            timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime)
+          }
+          speak(transcript + ' ' + this.state.currentTimeMsg)
+          this.setState({
+            timers: [...this.state.timers, newTimer],
+            status: this.STATUS.STANDBY
+          })
         }
-        speak(transcript + ' ' + this.state.currentTimeMsg)
-        this.setState({
-          timers: [...this.state.timers, newTimer],
-          status: this.STATUS.STANDBY
-        })
       }
   }
 
@@ -177,6 +192,7 @@ class App extends Component {
           To start a new timer, say "OK Timer", then say the message and the time.
         </p>
         {timers}
+        {this.state.isOnline ? '' : <NoInternet />}
       </div>
     );
   }
