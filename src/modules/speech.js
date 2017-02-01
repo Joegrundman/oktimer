@@ -11,6 +11,8 @@ export function parseTimer (transcript) {
             tmp = t
         } else if (t === 'five') {
             tmp = 5
+        } else if (t === 'two') {
+            tmp = 2
         } else if (t === 'one') {
             tmp = 1
         } else {
@@ -29,14 +31,17 @@ export function parseTimer (transcript) {
     return time
 }
 
-export function speak (text, cb){
-    const msg = new SpeechSynthesisUtterance()
+export function speak (text, callback) {
+    const msg = new SpeechSynthesisUtterance ()
     const synth = window.speechSynthesis
     msg.text = text
     synth.speak(msg)
 
     msg.onend = (e) => {
         console.log('ENDED with elapsed time', e.elapsedTime)
-        if(typeof cb === 'function') cb(e)
+        
+        if(typeof callback === 'function') { 
+            callback()
+        }
     }
 }
