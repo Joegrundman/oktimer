@@ -1,6 +1,7 @@
 export function parseTimer (transcript) {
 
-    var parsed = transcript.split(' ').map(n => !isNaN(parseInt(n, 10)) ? parseInt(n, 10) : n)
+    var parsed = transcript.split(' ')  
+        .map(n => !isNaN(parseInt(n, 10)) ? parseInt(n, 10) : n)
 
     console.log(parsed)
 
@@ -9,18 +10,28 @@ export function parseTimer (transcript) {
     parsed.forEach((t, i, arr) => {
         if(typeof t === 'number') {
             tmp = t
-        } else if (t === 'five') {
-            tmp = 5
-        } else if (t === 'two') {
-            tmp = 2
         } else if (t === 'one') {
             tmp = 1
+        } else if (t === 'two') {
+            tmp = 2
+        } else if (t === 'three') {
+            tmp = 3
+        } else if (t === 'four') {
+            tmp = 4
+        } else if (t === 'five') {
+            tmp = 5
         } else {
-            if( t === "seconds" || t === "second") {
+            
+            if( t === "seconds" || 
+                t === "second") {
                 tmp *= 1000
-            } else if ( t === "minutes" || t === "minute") {
+            } else if ( t === "minutes" || 
+                        t === "minute") {
                 tmp*= 60000
-            } else if ( t === "hours" || t === "hour" || t === "our" || t === "ours") {
+            } else if ( t === "hours" ||
+                        t === "hour" || 
+                        t === "our" || 
+                        t === "ours") {
                 tmp *= 3600000
             }
             time += tmp
@@ -40,7 +51,8 @@ export function speak (text, callback) {
     msg.onend = (e) => {
         console.log('ENDED with elapsed time', e.elapsedTime)
         
-        if(typeof callback === 'function') { 
+        if(callback) { 
+            console.log('finish speaking')
             callback()
         }
     }
