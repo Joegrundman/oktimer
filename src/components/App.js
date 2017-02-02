@@ -37,16 +37,17 @@ class App extends Component {
 
       // load saved data from localStorage
       const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer")) || null
-
+      // load response msg from localstorage if there is one
       if(okTimerSavedData && okTimerSavedData.okResponseMsg) {
         this.setState({
           okResponseMsg: okTimerSavedData.okResponseMsg
         })
       }   
+
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
       this.recognition = new SpeechRecognition()
 
-      this.recognition.interimResults = true
+      this.recognition.interimResults = false
       this.recognition.addEventListener('result', this.handleSpeechEvent)
       this.recognition.addEventListener('end', this.recognition.start)
       this.recognition.start()
@@ -89,12 +90,10 @@ class App extends Component {
         })
         let time =  parseTimer (transcript)
         if(typeof time === 'number' && time > 0) {
-          // this.recognition.stop()
-          speak(transcript, this.setState({
+          speak(transcript, () => this.setState({
               currentTime: time,
               status: this.STATUS.AWAIT_MSG
-            }//, this.recognition.start()
-            )
+            })
           )
         }
      }
@@ -131,7 +130,7 @@ class App extends Component {
         .join('')
 
       if(e.results[0].isFinal) {
-        console.log(transcript)
+        console.log('message: ',transcript)
 
         if (transcript === 'no') {
           // go back if time is incorrect and await a new time
@@ -140,6 +139,7 @@ class App extends Component {
           })
         } else {
           // proceed with creating new timer object
+          console.log('creating new timer object')
           const newTimer = {
             name: transcript,
             timeMsg: this.state.currentTimeMsg,
@@ -189,7 +189,7 @@ class App extends Component {
         <Navbar okResponseMsg={this.state.okResponseMsg} onSubmitNewOkResponseMsg={this.setNewOkResponse}/>
         <h5>Status:{this.state.status}</h5>
         <p className="App-intro">
-          To start a new timer, say "OK Timer", then say the message and the time.
+          To start a new timer, say "OK Timer", then say the time and the message.
         </p>
         {timers}
         {this.state.isOnline ? '' : <NoInternet />}
