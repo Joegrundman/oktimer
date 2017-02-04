@@ -4,6 +4,7 @@ import Navbar from './Navbar'
 import NoInternet from './NoInternet'
 import { parseTimer, speak } from '../modules/speech'
 import './App.css';
+import Help from './Help'
 
 class App extends Component {
   constructor(props: any){
@@ -22,9 +23,12 @@ class App extends Component {
       currentTimeMsg: '',
       okResponseMsg: 'OK',
       isOnline: true,
-      voice: null
+      voice: null,
+      showHelp: true
     }
 
+    this.showHelp = this.showHelp.bind(this)
+    this.dismissHelp = this.dismissHelp.bind(this)
     this.handleCloseTimer = this.handleCloseTimer.bind(this)
     this.handleSpeechEvent = this.handleSpeechEvent.bind(this)
     this.detectOkTimer = this.detectOkTimer.bind(this)
@@ -122,6 +126,18 @@ class App extends Component {
           )
         }
      }
+  }
+
+  dismissHelp() {
+    this.setState({
+      showHelp: false
+    })
+  }
+
+  showHelp() {
+    this.setState({
+      showHelp: true
+    })
   }
 
   handleCloseTimer (target) {
@@ -227,16 +243,10 @@ class App extends Component {
           okResponseMsg={this.state.okResponseMsg} 
           onSubmitNewOkResponseMsg={this.setNewOkResponse}
           handleChangeVoice={this.onChangeVoice}
+          showHelp={this.showHelp}
           />
-        <p className="App-intro">
-          To start a new timer, say "OK Timer", and wait for the response message, "{this.state.okResponseMsg}".
-        </p>
-        <p>
-        Then give the time, e.g. "two minutes" or "four minutes thirty seconds" and wait for the response.
-        </p>
-        <p>
-        If you wish to redo the time, say "no!". Otherwise give the message you would like to receive after the time has expired.
-        </p>
+        {this.state.showHelp ? 
+          <Help okResponseMsg={this.state.okResponseMsg} dismissHelp={this.dismissHelp}/> : ''}
         {timers}
         <NoInternet open={!this.state.isOnline} />
       </div>

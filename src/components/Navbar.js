@@ -79,7 +79,7 @@ class Navbar extends Component {
                     anchorOrigin={{horizontal: 'left', vertical: 'top'}}
                     targetOrigin={{horizontal: 'left', vertical: 'top'}}
                 >
-                    <MenuItem primaryText="Help" />
+                    <MenuItem primaryText="Help" onClick={this.props.showHelp}/>
                     <MenuItem primaryText="Ok Response" onClick={this.handleOpenOkResponse} />
                     <MenuItem primaryText="Set Voice" onClick={this.handleOpenVoiceDialog}/>
                 </IconMenu>
