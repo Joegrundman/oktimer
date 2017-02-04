@@ -21,13 +21,15 @@ class App extends Component {
       currentTime: 0,
       currentTimeMsg: '',
       okResponseMsg: 'OK',
-      isOnline: true
+      isOnline: true,
+      voice: null
     }
 
     this.handleCloseTimer = this.handleCloseTimer.bind(this)
     this.handleSpeechEvent = this.handleSpeechEvent.bind(this)
     this.detectOkTimer = this.detectOkTimer.bind(this)
     this.setNewOkResponse = this.setNewOkResponse.bind(this)
+    this.onChangeVoice = this.onChangeVoice.bind(this)
   }
 
   componentDidMount() {
@@ -37,13 +39,22 @@ class App extends Component {
 
       // load saved data from localStorage
       const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer")) || null
+
       // load response msg from localstorage if there is one
       if(okTimerSavedData && okTimerSavedData.okResponseMsg) {
         this.setState({
           okResponseMsg: okTimerSavedData.okResponseMsg
         })
-      }   
+      } 
 
+      // load presaved voice preference
+      if(okTimerSavedData && okTimerSavedData.voice) {
+        this.setState({
+          voice: okTimerSavedData.voice
+        })
+      }  
+
+      // initialise the SpeechRecognition api
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
       this.recognition = new SpeechRecognition()
 
@@ -69,7 +80,7 @@ class App extends Component {
           .join('')
 
       if(e.results[0].isFinal && transcript.toLowerCase() === ("ok timer")) {
-          speak(this.state.okResponseMsg)
+          speak(this.state.okResponseMsg, this.state.voice)
           console.log('ready...')
           this.setState({
             status: this.STATUS.AWAIT_TIME
@@ -90,7 +101,9 @@ class App extends Component {
         })
         let time =  parseTimer (transcript)
         if(typeof time === 'number' && time > 0) {
-          speak(transcript, () => this.setState({
+          speak(transcript, 
+            this.state.voice, 
+            () => this.setState({
               currentTime: time,
               status: this.STATUS.AWAIT_MSG
             })
@@ -116,8 +129,21 @@ class App extends Component {
       })
   }
 
+  onChangeVoice(name) {
+    console.log('in app, onchangevoice', name)
+    const nextVoice = name
+    this.setState({
+      voice: nextVoice
+    })
+    // save to localstorage
+    const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer"))
+    const newTimerData = {...okTimerSavedData, voice: nextVoice}
+    window.localStorage.setItem("OkTimer", JSON.stringify(newTimerData))
+  }
+
   setNewOkResponse(newMsg) {
     this.setState({okResponseMsg: newMsg})
+    // save to local storage
     const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer"))
     const newTimerData = {...okTimerSavedData, okResponseMsg: newMsg}
     window.localStorage.setItem("OkTimer", JSON.stringify(newTimerData)) 
@@ -145,7 +171,7 @@ class App extends Component {
             timeMsg: this.state.currentTimeMsg,
             timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime)
           }
-          speak(transcript + ' ' + this.state.currentTimeMsg)
+          speak(transcript + ' ' + this.state.currentTimeMsg, this.state.voice)
           this.setState({
             timers: [...this.state.timers, newTimer],
             status: this.STATUS.STANDBY
@@ -156,7 +182,7 @@ class App extends Component {
 
   timeIsUp(name) {
     console.log('timer has expired:',name)
-    speak(name)
+    speak(name, this.state.voice)
     const nextTimers = this.state.timers.filter(t => t.name !== name)
     this.setState({
       timers: nextTimers
@@ -186,13 +212,23 @@ class App extends Component {
 
     return (
       <div className="App" style={style}>
-        <Navbar okResponseMsg={this.state.okResponseMsg} onSubmitNewOkResponseMsg={this.setNewOkResponse}/>
+        <Navbar 
+          okResponseMsg={this.state.okResponseMsg} 
+          onSubmitNewOkResponseMsg={this.setNewOkResponse}
+          handleChangeVoice={this.onChangeVoice}
+          />
         <h5>Status:{this.state.status}</h5>
         <p className="App-intro">
-          To start a new timer, say "OK Timer", then say the time and the message.
+          To start a new timer, say "OK Timer", and wait for the response message, "{this.state.okResponseMsg}".
+        </p>
+        <p>
+        Then give the time, e.g. "two minutes" or "four minutes thirty seconds" and wait for the response.
+        </p>
+        <p>
+        If you wish to redo the time, say "no!". Otherwise give the message you would like to receive after the time has expired.
         </p>
         {timers}
-        {this.state.isOnline ? '' : <NoInternet />}
+        <NoInternet open={!this.state.isOnline} />
       </div>
     );
   }

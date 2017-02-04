@@ -21,7 +21,7 @@ export function parseTimer (transcript) {
         } else if (t === 'five') {
             tmp = 5
         } else {
-            
+
             if( t === "seconds" || 
                 t === "second") {
                 tmp *= 1000
@@ -42,10 +42,12 @@ export function parseTimer (transcript) {
     return time
 }
 
-export function speak (text, callback) {
+export function speak (text, voice, callback) {
     const msg = new SpeechSynthesisUtterance ()
     const synth = window.speechSynthesis
+    console.log('current voice', voice)
     msg.text = text
+    if(voice) { msg.voice = window.speechSynthesis.getVoices().find(v => v.name === voice)}
     synth.speak(msg)
 
     msg.onend = (e) => {
@@ -57,3 +59,5 @@ export function speak (text, callback) {
         }
     }
 }
+
+
