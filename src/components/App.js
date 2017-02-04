@@ -134,7 +134,7 @@ class App extends Component {
         return t
       })
       .filter(t => t.name !== target)
-      
+
       this.setState({
         timers
       })
@@ -228,7 +228,6 @@ class App extends Component {
           onSubmitNewOkResponseMsg={this.setNewOkResponse}
           handleChangeVoice={this.onChangeVoice}
           />
-        <h5>Status:{this.state.status}</h5>
         <p className="App-intro">
           To start a new timer, say "OK Timer", and wait for the response message, "{this.state.okResponseMsg}".
         </p>
