@@ -100,21 +100,32 @@ class App extends Component {
           currentTimeMsg : transcript
         })
         let time =  parseTimer (transcript)
+
+
         if(typeof time === 'number' && time > 0) {
+
+        // disable speech recognition to avoid collision with speaking
+        this.recognition.abort()
+        this.recognition.removeEventListener('end', this.recognition.start)
           speak(transcript, 
             this.state.voice, 
-            () => this.setState({
+            () => {
+              this.setState({
               currentTime: time,
               status: this.STATUS.AWAIT_MSG
-            })
+            }, () => {
+              //reenable speech recognition after speaking finished
+              this.recognition.addEventListener('end', this.recognition.start)
+              this.recognition.start()}
+              )
+            }
           )
         }
      }
   }
 
   handleCloseTimer (target) {
-    console.log('closing', target)
-    
+    console.log('closing', target)    
     const timers = this.state.timers
       .map(t => {
         if(t.name === target) {
@@ -123,7 +134,7 @@ class App extends Component {
         return t
       })
       .filter(t => t.name !== target)
-
+      
       this.setState({
         timers
       })
