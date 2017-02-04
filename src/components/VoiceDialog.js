@@ -17,7 +17,20 @@ class VoiceDialog extends Component {
     }
 
     componentDidMount() {
-        window.speechSynthesis.addEventListener('voiceschanged', this.populateVoices)
+        const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer")) || null
+        let currentVoice = 0
+
+        if(okTimerSavedData && okTimerSavedData.voice) {
+            currentVoice = okTimerSavedData.voice
+        }  
+        // set available voices to state.voices and find the index of the currently selected voice and put that on value
+        window.speechSynthesis.addEventListener('voiceschanged',
+            () => this.setState ({ voices: window.speechSynthesis.getVoices() },
+            () => this.setState({value: this.state.voices.findIndex(v => v.name === currentVoice) || 0})
+            )
+        )
+ 
+                // this.setState({value: voices.findIndex(v => v.name === currentVoice) || 0})
     }
 
     populateVoices (e) {
