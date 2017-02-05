@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { green50, green100, green200 } from 'material-ui/styles/colors'
 import Timer from './Timer'
 import Navbar from './Navbar'
 import NoInternet from './NoInternet'
@@ -219,9 +220,9 @@ class App extends Component {
   render() {
 
     const bgCols = {
-      'STATUS_STANDBY' : '#ebe',
-      'STATUS_AWAIT_TIME' : '#bee',
-      'STATUS_AWAIT_MSG' : '#eeb'
+      'STATUS_STANDBY' : green50,
+      'STATUS_AWAIT_TIME' : green100,
+      'STATUS_AWAIT_MSG' : green200
     }
 
     const style={
