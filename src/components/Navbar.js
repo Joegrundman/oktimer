@@ -4,6 +4,7 @@ import IconMenu from 'material-ui/IconMenu'
 import IconButton from 'material-ui/IconButton'
 import MenuItem from 'material-ui/MenuItem'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
+import NavigationClose from 'material-ui/svg-icons/navigation/close'
 import { blue500 } from 'material-ui/styles/colors'
 import OkResponseDialog from './OkResponseDialog'
 import VoiceDialog from './VoiceDialog'
@@ -91,6 +92,7 @@ class Navbar extends Component {
         <AppBar 
             style={NavbarStyles}
             title="OK Timer" 
+            iconElementLeft={<IconButton><NavigationClose /></IconButton>}
             iconElementRight={
                 <IconMenu
                     iconButtonElement={<IconButton><MoreVertIcon/></IconButton>}
