@@ -7,6 +7,7 @@ Currently working on
 
 Todo List
 ---------
-
+[ ] fix color scheme
 [ ] need to make sure voice does not collide with input when timer expires
 [ ] need to strip extraneous words from transcript at detectTimer so feedback doesn't include them
+[ ] extract most of logic in App into module
