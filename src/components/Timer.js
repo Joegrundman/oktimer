@@ -1,10 +1,14 @@
-import React, { Component } from 'react'
-// import {Card, CardActions, CardHeader} from 'material-ui/Card';
+import React, { Component, PropTypes } from 'react'
 import Paper from 'material-ui/Paper'
 import FlatButton from 'material-ui/FlatButton';
-import './Timer.css'
 
 class Timer extends Component {
+
+    static propTypes = {
+        name: PropTypes.string.isRequired,
+        timeMsg: PropTypes.string.isRequired,
+        cancelTimer: PropTypes.func.isRequired
+    }
 
     render(){
 
@@ -13,7 +17,7 @@ class Timer extends Component {
             paddingBottom: '10px',
             width: '80%',
             margin: '0 auto',
-            marginBottom: '5px'
+            marginTop: '10px'
         }
 
         return (
