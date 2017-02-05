@@ -9,7 +9,8 @@ class Help extends Component {
             paddingTop: '10px',
             paddingBottom: '10px',
             margin: '0 auto',
-            marginTop: '10px'
+            marginTop: '10px',
+            marginBottom: '5px'
         }
         return (
             <Paper style={style}>
@@ -22,7 +23,7 @@ class Help extends Component {
                 <p>
                 If you wish to redo the time, say "no!". Otherwise give the message you would like to receive after the time has expired.
                 </p>
-                <FlatButton label="Dismiss" onClick={this.props.dismissHelp}/>
+                <FlatButton label="Dismiss" onClick={this.props.dismissHelp} primary={true}/>
             </Paper>
         )
     }

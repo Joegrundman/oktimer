@@ -21,6 +21,7 @@ class Timer extends Component {
                 <span>{this.props.name} - {this.props.timeMsg}</span> 
                 <FlatButton
                     label="cancel"
+                    primary={true}
                     onClick={this.props.cancelTimer}/>
             </Paper>
         )
