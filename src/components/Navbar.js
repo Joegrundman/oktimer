@@ -4,7 +4,7 @@ import IconMenu from 'material-ui/IconMenu'
 import IconButton from 'material-ui/IconButton'
 import MenuItem from 'material-ui/MenuItem'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
-import { green500 } from 'material-ui/styles/colors'
+import { blue500 } from 'material-ui/styles/colors'
 import OkResponseDialog from './OkResponseDialog'
 import VoiceDialog from './VoiceDialog'
 
@@ -83,7 +83,7 @@ class Navbar extends Component {
 
     render() {
         const NavbarStyles = {
-            backgroundColor: green500
+            backgroundColor: blue500
         }
 
         return (
