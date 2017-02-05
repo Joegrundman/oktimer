@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import SelectField from 'material-ui/SelectField'
@@ -16,6 +16,15 @@ class VoiceDialog extends Component {
         this.handleVoiceChange = this.handleVoiceChange.bind(this)
     }
 
+    static propTypes = {
+        handleClose: PropTypes.func.isRequired,
+        open: PropTypes.bool
+    }
+
+    static defaultProps = {
+        open: false
+    }
+
     componentDidMount() {
         const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer")) || null
         let currentVoice = 0
@@ -29,8 +38,6 @@ class VoiceDialog extends Component {
             () => this.setState({value: this.state.voices.findIndex(v => v.name === currentVoice) || 0})
             )
         )
- 
-                // this.setState({value: voices.findIndex(v => v.name === currentVoice) || 0})
     }
 
     populateVoices (e) {

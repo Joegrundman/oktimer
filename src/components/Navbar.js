@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import AppBar from 'material-ui/AppBar'
 import IconMenu from 'material-ui/IconMenu'
 import IconButton from 'material-ui/IconButton'
@@ -8,6 +8,18 @@ import OkResponseDialog from './OkResponseDialog'
 import VoiceDialog from './VoiceDialog'
 
 class Navbar extends Component {
+    
+    static propTypes = {
+        showHelp: PropTypes.func.isRequired,
+        okResponseMsg: PropTypes.string,
+        onSubmitNewOkResponseMsg: PropTypes.func.isRequired,
+        handleChangeVoice: PropTypes.func.isRequired   
+    }
+
+    static defaultProps = {
+        OkResponseMsg: 'yes?'
+    }
+
     constructor(props) {
         super(props)
         this.state = {

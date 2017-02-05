@@ -1,9 +1,22 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import Dialog from 'material-ui/Dialog'
 import TextField from 'material-ui/TextField'
 import FlatButton from 'material-ui/FlatButton'
 
 class OkResponseDialog extends Component {
+
+    static propTypes = {
+        handleClose: PropTypes.func.isRequired,
+        handleSubmit: PropTypes.func.isRequired,
+        handleTextChange: PropTypes.func.isRequired,
+        open: PropTypes.bool,
+        defaultValue: PropTypes.string
+    }
+
+    static defaultProps = {
+        open: false,
+        defaultValue: 'yes?'
+    }
 
     render() {
         const actions = [

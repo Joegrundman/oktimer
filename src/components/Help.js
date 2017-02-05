@@ -1,8 +1,18 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import Paper from 'material-ui/Paper'
 import FlatButton from 'material-ui/FlatButton'
 
 class Help extends Component {
+
+    static propTypes = {
+        okResponseMsg: PropTypes.string,
+        dismissHelp: PropTypes.func.isRequired
+    }
+
+    static defaultProps = {
+        okResponseMsg: 'yes?'
+    }
+
     render () {
         const style = {
             width: '90%',

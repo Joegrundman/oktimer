@@ -9,6 +9,7 @@ class NoInternet extends Component {
     static defaultProps = {
         open: true
     }
+    
     render () {
         
         const message = 'No internet connection. Unable to process speech.'
