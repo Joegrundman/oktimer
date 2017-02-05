@@ -86,7 +86,6 @@ class App extends Component {
 
       if(e.results[0].isFinal && transcript.toLowerCase() === ("ok timer")) {
           speak(this.state.okResponseMsg, this.state.voice)
-          console.log('ready...')
           this.setState({
             status: this.STATUS.AWAIT_TIME
           })
@@ -94,29 +93,30 @@ class App extends Component {
   }
 
   detectTime(e) {
+    console.log(this.state.status)
     const transcript = Array.from(e.results)
           .map(result => result[0])
           .map(result => result.transcript)
           .join('')
 
       if(e.results[0].isFinal) {
-        console.log(transcript)
-        this.setState({
-          currentTimeMsg : transcript
-        })
-        let time =  parseTimer (transcript)
-
+        // this.setState({
+        //   currentTimeMsg : transcript
+        // })
+        let time, timeMsg; // ; needed because next line is destructured
+        [time, timeMsg] =  parseTimer (transcript)
 
         if(typeof time === 'number' && time > 0) {
 
         // disable speech recognition to avoid collision with speaking
         this.recognition.abort()
         this.recognition.removeEventListener('end', this.recognition.start)
-          speak(transcript, 
+          speak(timeMsg, 
             this.state.voice, 
             () => {
               this.setState({
               currentTime: time,
+              currentTimeMsg: timeMsg,
               status: this.STATUS.AWAIT_MSG
             }, () => {
               //reenable speech recognition after speaking finished
@@ -178,6 +178,8 @@ class App extends Component {
   }
 
   takeMessageAndSetTimer(e) {
+        console.log(this.state.status)
+
       const transcript = Array.from(e.results)
         .map(result => result[0])
         .map(result => result.transcript)
@@ -199,7 +201,7 @@ class App extends Component {
             timeMsg: this.state.currentTimeMsg,
             timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime)
           }
-          speak(transcript + ' ' + this.state.currentTimeMsg, this.state.voice)
+          speak(transcript + ' '+ 'in' + ' ' + this.state.currentTimeMsg, this.state.voice)
           this.setState({
             timers: [...this.state.timers, newTimer],
             status: this.STATUS.STANDBY

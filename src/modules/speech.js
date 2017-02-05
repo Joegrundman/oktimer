@@ -1,25 +1,51 @@
 export function parseTimer (transcript) {
-
+    console.log(transcript)
     var parsed = transcript.split(' ')  
         .map(n => !isNaN(parseInt(n, 10)) ? parseInt(n, 10) : n)
-
-    console.log(parsed)
+        .map(n=> {
+            if(typeof n === 'number') {
+                return n
+            } else if(typeof n === 'string'){
+                switch(n) {
+                    case 'one': return 1;
+                    case 'two': return 2;
+                    case 'three': return 3;
+                    case 'four': return 4;
+                    case 'five': return 5;
+                    case 'six': return 6;
+                    case 'seven': return 7;
+                    case 'eight': return 8;
+                    case 'nine': return 9;
+                    case 'ten': return 10;
+                    case 'second': return 'second';
+                    case 'seconds': return 'second';
+                    case 'minute': return 'minute';
+                    case 'minutes': return 'minute';
+                    case 'hour': return 'hour';
+                    case 'hours': return 'hour';
+                    case 'our': return 'hour';
+                    case 'ours': return 'hour';
+                    default: return ''
+                }
+            }
+        })
+        .filter(n => n !== '')
+        .map((n, i, arr) => {
+            if(typeof n === 'number') return n
+            if(typeof n === 'string'){
+                if(typeof arr[i - 1] === 'number' && arr[i - 1] !== 1){
+                    return n + 's'
+                } else{
+                    return n
+                }
+            }
+        })
 
     let time = 0
     let tmp = 0
-    parsed.forEach((t, i, arr) => {
+    parsed.forEach(t => {
         if(typeof t === 'number') {
             tmp = t
-        } else if (t === 'one') {
-            tmp = 1
-        } else if (t === 'two') {
-            tmp = 2
-        } else if (t === 'three') {
-            tmp = 3
-        } else if (t === 'four') {
-            tmp = 4
-        } else if (t === 'five') {
-            tmp = 5
         } else {
 
             if( t === "seconds" || 
@@ -29,17 +55,16 @@ export function parseTimer (transcript) {
                         t === "minute") {
                 tmp*= 60000
             } else if ( t === "hours" ||
-                        t === "hour" || 
-                        t === "our" || 
-                        t === "ours") {
+                        t === "hour" ) {
                 tmp *= 3600000
             }
             time += tmp
             tmp = 0
         }
     })
+    
     console.log('timer', time)
-    return time
+    return [time, parsed.filter(n => n!== '').join(' ')]
 }
 
 export function speak (text, voice, callback) {
