@@ -5,6 +5,16 @@ import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 
 class VoiceDialog extends Component {
+
+    static propTypes = {
+        handleClose: PropTypes.func.isRequired,
+        open: PropTypes.bool
+    }
+
+    static defaultProps = {
+        open: false
+    }
+    
     constructor(props) {
         super(props)
         this.state = {
@@ -14,15 +24,6 @@ class VoiceDialog extends Component {
 
         this.populateVoices = this.populateVoices.bind(this)
         this.handleVoiceChange = this.handleVoiceChange.bind(this)
-    }
-
-    static propTypes = {
-        handleClose: PropTypes.func.isRequired,
-        open: PropTypes.bool
-    }
-
-    static defaultProps = {
-        open: false
     }
 
     componentDidMount() {
