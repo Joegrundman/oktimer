@@ -5,7 +5,7 @@ import Timer from './Timer'
 import Navbar from './Navbar'
 import NoInternet from './NoInternet'
 import Prompt from './Prompt'
-import { parseTimer, speak } from '../modules/speech'
+import { getTranscript, parseTimer, speak } from '../modules/speech'
 import './App.css';
 import Help from './Help'
 import alertSound from '../sms-alert-3-daniel_simon.mp3'
@@ -104,6 +104,7 @@ class App extends Component {
   }
 
   handleSpeechEvent(e) {
+    // depending on status, the speech event is sent to different handlers
     switch(this.state.status) {
       case this.STATUS.STANDBY: this.detectOkTimer(e); break
       case this.STATUS.AWAIT_TIME: this.detectTime(e); break
@@ -113,10 +114,7 @@ class App extends Component {
   }
 
   detectOkTimer(e) {
-    const transcript = Array.from(e.results)
-          .map(result => result[0])
-          .map(result => result.transcript)
-          .join('')
+    const transcript = getTranscript(e)
 
     console.log(transcript)
       if(e.results[0].isFinal && transcript.toLowerCase() === ("ok timer")) {
@@ -132,12 +130,9 @@ class App extends Component {
 
   detectTime(e) {
     console.log(this.state.status)
-    const transcript = Array.from(e.results)
-          .map(result => result[0])
-          .map(result => result.transcript)
-          .join('')
+    const transcript = getTranscript(e)
 
-console.log(transcript)
+    console.log(transcript)
 
       if(e.results[0].isFinal) {
         let time, timeMsg; // ; needed because next line is destructured
@@ -174,10 +169,7 @@ console.log(transcript)
   takeMessageAndSetTimer(e) {
         console.log(this.state.status)
 
-      const transcript = Array.from(e.results)
-        .map(result => result[0])
-        .map(result => result.transcript)
-        .join('')
+      const transcript = getTranscript(e)
 
         console.log(transcript)
 

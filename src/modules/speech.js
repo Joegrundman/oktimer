@@ -101,4 +101,11 @@ export function parseMilliseconds(milliseconds) {
             ${seconds < 10 ? '0' + seconds: seconds}`
 }
 
+export function getTranscript(e){
+    return Array.from(e.results)
+          .map(result => result[0])
+          .map(result => result.transcript)
+          .join('')
+}
 
+ 
