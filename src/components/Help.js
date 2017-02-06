@@ -36,7 +36,7 @@ class Help extends Component {
                 If you wish to redo the time, say "no!". Otherwise give the message you would like to receive after the time has expired.
                 </p>
                 <p>
-                When a timer reaches the end it will repeat every ten seconds. The timer can be dismissed by pressing the button, or by calling "dismiss".
+                When a timer reaches the end it will repeat every 15 seconds. The timer can be dismissed by pressing the button, or by calling "dismiss".
                 </p>
                 <p>
                     This help panel can be brought back from the Options menu in the top right.

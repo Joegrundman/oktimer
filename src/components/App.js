@@ -211,7 +211,7 @@ class App extends Component {
     timer.interval = setInterval(() => {
       audio.play()
       speak(name, this.state.voice)
-    }, 10000)
+    }, 15000)
 
 
     this.setState({
