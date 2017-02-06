@@ -6,6 +6,7 @@ import NoInternet from './NoInternet'
 import { parseTimer, speak } from '../modules/speech'
 import './App.css';
 import Help from './Help'
+import alertSound from '../sms-alert-3-daniel_simon.mp3'
 
 class App extends Component {
   constructor(props: any){
@@ -18,15 +19,18 @@ class App extends Component {
     }
 
     this.state = {
-      timers: [],
-      status: this.STATUS.STANDBY,
-      currentTime: 0,
-      currentTimeMsg: '',
-      okResponseMsg: 'OK',
-      isOnline: true,
-      voice: null,
-      showHelp: true
+      timers: [], // {[]} array of current timers
+      status: this.STATUS.STANDBY, // {string} current status
+      currentTime: 0, //{number} time for current timer
+      currentTimeMsg: '', // {string} timeMessage for current timer
+      okResponseMsg: 'OK', // {string} current response message after "okTimer"
+      isOnline: true, // {bool} 
+      voice: null, // {nullable string} default if null otherwise name of voice being used,
+      showHelp: true, // {bool} shows help panel
+      isAlerting: false // {bool} shows if message is currently alerting and waiting to be dismissed
     }
+
+    this.resetTimer = null // {nullable function } contains timer to reset state after 60 seconds
 
     this.showHelp = this.showHelp.bind(this)
     this.dismissHelp = this.dismissHelp.bind(this)
@@ -84,8 +88,10 @@ class App extends Component {
           .map(result => result.transcript)
           .join('')
 
+    console.log(transcript)
       if(e.results[0].isFinal && transcript.toLowerCase() === ("ok timer")) {
           speak(this.state.okResponseMsg, this.state.voice)
+          this.resetTimer = setTimeout(() => this.setState({status: this.STATUS.STANDBY}), 60000)
           this.setState({
             status: this.STATUS.AWAIT_TIME
           })
@@ -100,9 +106,6 @@ class App extends Component {
           .join('')
 
       if(e.results[0].isFinal) {
-        // this.setState({
-        //   currentTimeMsg : transcript
-        // })
         let time, timeMsg; // ; needed because next line is destructured
         [time, timeMsg] =  parseTimer (transcript)
 
@@ -127,6 +130,52 @@ class App extends Component {
           )
         }
      }
+  }
+
+  takeMessageAndSetTimer(e) {
+        console.log(this.state.status)
+
+      const transcript = Array.from(e.results)
+        .map(result => result[0])
+        .map(result => result.transcript)
+        .join('')
+
+      if(e.results[0].isFinal) {
+        console.log('message: ',transcript)
+
+        if (transcript === 'no') {
+          // go back if time is incorrect and await a new time
+          this.setState({
+            status: this.STATUS.AWAIT_TIME,
+          })
+        } else {
+          // proceed with creating new timer object
+          console.log('creating new timer object')
+          clearTimeout(this.resetTimer)
+          const newTimer = {
+            name: transcript,
+            timeMsg: this.state.currentTimeMsg,
+            timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime)
+          }
+          speak(transcript + ' in ' + this.state.currentTimeMsg, this.state.voice)
+          this.setState({
+            timers: [...this.state.timers, newTimer],
+            status: this.STATUS.STANDBY
+          })
+        }
+      }
+  }
+
+  timeIsUp(name) {
+    console.log('timer has expired:',name)
+    var audio = new Audio(alertSound)
+    audio.play()
+
+    speak(name, this.state.voice)
+    const nextTimers = this.state.timers.filter(t => t.name !== name)
+    this.setState({
+      timers: nextTimers
+    })
   }
 
   dismissHelp() {
@@ -158,7 +207,6 @@ class App extends Component {
   }
 
   onChangeVoice(name) {
-    console.log('in app, onchangevoice', name)
     const nextVoice = name
     this.setState({
       voice: nextVoice
@@ -175,48 +223,6 @@ class App extends Component {
     const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer"))
     const newTimerData = {...okTimerSavedData, okResponseMsg: newMsg}
     window.localStorage.setItem("OkTimer", JSON.stringify(newTimerData)) 
-  }
-
-  takeMessageAndSetTimer(e) {
-        console.log(this.state.status)
-
-      const transcript = Array.from(e.results)
-        .map(result => result[0])
-        .map(result => result.transcript)
-        .join('')
-
-      if(e.results[0].isFinal) {
-        console.log('message: ',transcript)
-
-        if (transcript === 'no') {
-          // go back if time is incorrect and await a new time
-          this.setState({
-            status: this.STATUS.AWAIT_TIME
-          })
-        } else {
-          // proceed with creating new timer object
-          console.log('creating new timer object')
-          const newTimer = {
-            name: transcript,
-            timeMsg: this.state.currentTimeMsg,
-            timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime)
-          }
-          speak(transcript + ' '+ 'in' + ' ' + this.state.currentTimeMsg, this.state.voice)
-          this.setState({
-            timers: [...this.state.timers, newTimer],
-            status: this.STATUS.STANDBY
-          })
-        }
-      }
-  }
-
-  timeIsUp(name) {
-    console.log('timer has expired:',name)
-    speak(name, this.state.voice)
-    const nextTimers = this.state.timers.filter(t => t.name !== name)
-    this.setState({
-      timers: nextTimers
-    })
   }
 
   render() {

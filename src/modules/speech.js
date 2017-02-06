@@ -1,5 +1,9 @@
 export function parseTimer (transcript) {
     console.log(transcript)
+
+    //split the transcript then map all number strings and strip s's off times
+    // and remove irrelevant words
+    // add s to times for plurals
     var parsed = transcript.split(' ')  
         .map(n => !isNaN(parseInt(n, 10)) ? parseInt(n, 10) : n)
         .map(n=> {
@@ -28,6 +32,8 @@ export function parseTimer (transcript) {
                     default: return ''
                 }
             }
+            // shouldn't ever get this far, just to make react tools problem disappear
+            return n
         })
         .filter(n => n !== '')
         .map((n, i, arr) => {
@@ -39,6 +45,7 @@ export function parseTimer (transcript) {
                     return n
                 }
             }
+            return n
         })
 
     let time = 0
@@ -70,14 +77,11 @@ export function parseTimer (transcript) {
 export function speak (text, voice, callback) {
     const msg = new SpeechSynthesisUtterance ()
     const synth = window.speechSynthesis
-    console.log('current voice', voice)
     msg.text = text
     if(voice) { msg.voice = window.speechSynthesis.getVoices().find(v => v.name === voice)}
     synth.speak(msg)
 
     msg.onend = (e) => {
-        console.log('ENDED with elapsed time', e.elapsedTime)
-        
         if(callback) { 
             console.log('finish speaking')
             callback()
