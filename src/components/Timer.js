@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import Paper from 'material-ui/Paper'
 import FlatButton from 'material-ui/FlatButton'
 import { amber100 } from 'material-ui/styles/colors'
+import { parseMilliseconds } from '../modules/speech'
 
 class Timer extends Component {
 
@@ -16,7 +17,7 @@ class Timer extends Component {
 
     render(){
 
-        let style = {
+        let paperStyle = {
             paddingTop: '10px',
             paddingBottom: '10px',
             width: '80%',
@@ -27,8 +28,9 @@ class Timer extends Component {
         }
 
         return (
-            <Paper style={style}>
-                <span>{this.props.timer.name} - {this.props.timer.timeMsg}</span> 
+            <Paper style={paperStyle}>
+                <span>{this.props.timer.name} - {this.props.timer.timeMsg} </span> 
+                <span>{this.props.expired ? "Expired": parseMilliseconds(this.props.timer.timeRemaining)}</span>
                 <FlatButton
                     label={this.props.timer.expored ? "dismiss" :"cancel"}
                     primary={true}

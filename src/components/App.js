@@ -32,6 +32,8 @@ class App extends Component {
 
     this.resetTimer = null // {nullable function } contains timer to reset state after 60 seconds
 
+    this.timeInterval = null;
+
     this.showHelp = this.showHelp.bind(this)
     this.dismissHelp = this.dismissHelp.bind(this)
     this.handleCloseTimer = this.handleCloseTimer.bind(this)
@@ -78,6 +80,24 @@ class App extends Component {
       this.recognition.addEventListener('result', this.handleSpeechEvent)
       this.recognition.addEventListener('end', this.recognition.start)
       this.recognition.start()
+
+      //initialise the interval to mark the countdowns
+      this.timeInterval = setInterval(() => {
+        const nextTimers = this.state.timers.map(t => {
+          if(t.timeRemaining > 0){ 
+            t.timeRemaining -= 1000
+          }
+          return t
+        })
+        this.setState({
+          timers: nextTimers
+        })
+      }, 1000)
+  }
+
+  componentWillUnmount(){
+    // remove interval when app closed just in case
+    clearInterval(this.timeInterval)
   }
 
   handleSpeechEvent(e) {
@@ -173,7 +193,8 @@ console.log(transcript)
           const newTimer = {
             name: transcript,
             timeMsg: this.state.currentTimeMsg,
-            timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime)
+            timeRemaining: this.state.currentTime,
+            timer: setTimeout(() => this.timeIsUp(transcript), this.state.currentTime),
           }
           speak(transcript + ' in ' + this.state.currentTimeMsg, this.state.voice)
           this.setState({
@@ -201,13 +222,6 @@ console.log(transcript)
     this.setState({
       timers: [...timers, timer]
     })
-    // audio.play()
-
-    // speak(name, this.state.voice)
-    // const nextTimers = this.state.timers.filter(t => t.name !== name)
-    // this.setState({
-    //   timers: nextTimers
-    // })
   }
 
 

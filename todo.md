@@ -13,6 +13,7 @@ Todo List
 [ ] extract most of logic in App into module  
 [x] redundant top-left icon needs to be changed
 [ ] Nav close icon should have some effect  
-[ ] add alarm sound when message going to fire  
-[ ] have time to go show on each timer panel
+[x] add alarm sound when message going to fire  
+[x] have time to go show on each timer panel
 [x] add autoreset timer in case left unused for 30 seconds
+[ ] fix issue on detectTimer when sometiemes callback not fired with valid time, causing it to hang

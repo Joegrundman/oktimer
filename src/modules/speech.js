@@ -89,6 +89,16 @@ export function speak (text, voice, callback) {
     }
 }
 
+export function parseMilliseconds(milliseconds) {
+    var seconds = Math.round(milliseconds / 1000)
+    var hours = Math.floor(seconds / 3600)
+    seconds %= 3600
+    var minutes = Math.floor(seconds / 60)
+    seconds %= 60
 
+    return `${hours > 0 ? hours + ':' : ''}
+            ${minutes < 10 ? '0' + minutes : minutes}:
+            ${seconds < 10 ? '0' + seconds: seconds}`
+}
 
 
