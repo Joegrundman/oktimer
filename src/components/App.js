@@ -4,6 +4,7 @@ import { blue50, blue100, blue200, blue300, blue400 } from 'material-ui/styles/c
 import Timer from './Timer'
 import Navbar from './Navbar'
 import NoInternet from './NoInternet'
+import Prompt from './Prompt'
 import { parseTimer, speak } from '../modules/speech'
 import './App.css';
 import Help from './Help'
@@ -295,6 +296,12 @@ console.log(transcript)
       'STATUS_AWAIT_TIME' : blue300,
       'STATUS_AWAIT_MSG' : blue400
      }
+    
+    const statusMessage = {
+      'STATUS_STANDBY' : 'Say "OK Timer" to start.',
+      'STATUS_AWAIT_TIME' : "Give the time delay.",
+      'STATUS_AWAIT_MSG' : "Give the message to be said after the delay."     
+    }
 
     const style = {
         background: `linear-gradient(${bgColsStart[this.state.status]}, ${bgCols[this.state.status]})`
@@ -318,6 +325,9 @@ console.log(transcript)
           />
         {this.state.hideHelp ? 
           '' : <Help okResponseMsg={this.state.okResponseMsg} dismissHelp={this.dismissHelp} dismissHelpPermanently={() => this.dismissHelp(true)/* true:  permanent*/}/>}
+        <Prompt status={this.state.status}>
+          {statusMessage[this.state.status]}
+        </Prompt>
         {timers}
         <NoInternet open={!this.state.isOnline} />
       </div>
