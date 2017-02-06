@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { blue50, blue100, blue200 } from 'material-ui/styles/colors'
+import Radium from 'radium'
+import { blue50, blue100, blue200, blue300, blue400 } from 'material-ui/styles/colors'
 import Timer from './Timer'
 import Navbar from './Navbar'
 import NoInternet from './NoInternet'
@@ -7,6 +8,7 @@ import { parseTimer, speak } from '../modules/speech'
 import './App.css';
 import Help from './Help'
 import alertSound from '../sms-alert-3-daniel_simon.mp3'
+
 
 class App extends Component {
   constructor(props: any){
@@ -288,9 +290,14 @@ console.log(transcript)
       'STATUS_AWAIT_TIME' : blue100,
       'STATUS_AWAIT_MSG' : blue200
     }
+     const bgColsStart = {
+      'STATUS_STANDBY' : blue200,
+      'STATUS_AWAIT_TIME' : blue300,
+      'STATUS_AWAIT_MSG' : blue400
+     }
 
-    const style={
-      backgroundColor: bgCols[this.state.status]
+    const style = {
+        background: `linear-gradient(${bgColsStart[this.state.status]}, ${bgCols[this.state.status]})`
     }
 
     const timers = this.state.timers.map((t,i) => (
@@ -318,4 +325,4 @@ console.log(transcript)
   }
 }
 
-export default App;
+export default Radium(App);
