@@ -29,7 +29,7 @@ class Timer extends Component {
 
         return (
             <Paper style={paperStyle}>
-                <span>{this.props.timer.name} - {this.props.timer.timeMsg} </span> 
+                <span>{this.props.timer.name} - {this.props.timer.timeMsg} - </span> 
                 <span>{this.props.timer.expired ? "Expired": parseMilliseconds(this.props.timer.timeRemaining)}</span>
                 <FlatButton
                     label={this.props.timer.expired ? "dismiss" :"cancel"}
