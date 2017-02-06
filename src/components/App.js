@@ -251,6 +251,7 @@ console.log(transcript)
         if(t.name === target) {
           clearTimeout(t.timer)
           clearInterval(t.interval)
+          clearInterval(t.timeRemaining)
         }
         return t
       })
