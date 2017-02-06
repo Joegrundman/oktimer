@@ -18,6 +18,8 @@ class Help extends Component {
             width: '90%',
             paddingTop: '10px',
             paddingBottom: '10px',
+            paddingLeft: '20px',
+            paddingRight: '20px',
             margin: '0 auto',
             marginTop: '10px',
             marginBottom: '5px'
@@ -33,7 +35,14 @@ class Help extends Component {
                 <p>
                 If you wish to redo the time, say "no!". Otherwise give the message you would like to receive after the time has expired.
                 </p>
-                <FlatButton label="Dismiss" onClick={this.props.dismissHelp} primary={true}/>
+                <p>
+                When a timer reaches the end it will repeat every ten seconds. The timer can be dismissed by pressing the button, or by calling "dismiss".
+                </p>
+                <p>
+                    This help panel can be brought back from the Options menu in the top right.
+                </p>
+                <FlatButton label="Got it" onClick={this.props.dismissHelp} primary={true}/>
+                <FlatButton label="Don't show again." onClick={this.props.dismissHelpPermanently} primary={true}/>
             </Paper>
         )
     }

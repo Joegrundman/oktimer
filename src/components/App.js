@@ -63,6 +63,13 @@ class App extends Component {
         })
       }  
 
+            // load presaved voice preference
+      if(okTimerSavedData && okTimerSavedData.showHelp === false) {
+        this.setState({
+          showHelp: okTimerSavedData.showHelp
+        })
+      }  
+
       // initialise the SpeechRecognition api
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
       this.recognition = new SpeechRecognition()
@@ -95,7 +102,9 @@ class App extends Component {
           this.setState({
             status: this.STATUS.AWAIT_TIME
           })
-        }
+      } else if (e.results[0].isFinal && transcript.toLowerCase() === ("dismiss")) {
+        this.dismissExpiredTimers()
+      }
   }
 
   detectTime(e) {
@@ -104,6 +113,8 @@ class App extends Component {
           .map(result => result[0])
           .map(result => result.transcript)
           .join('')
+
+console.log(transcript)
 
       if(e.results[0].isFinal) {
         let time, timeMsg; // ; needed because next line is destructured
@@ -132,6 +143,11 @@ class App extends Component {
      }
   }
 
+  dismissExpiredTimers() {
+    const expiredTimers = this.state.timers.filter(t => t.expired === true)
+    expiredTimers.forEach(t => this.handleCloseTimer(t.name))
+  }
+
   takeMessageAndSetTimer(e) {
         console.log(this.state.status)
 
@@ -139,6 +155,8 @@ class App extends Component {
         .map(result => result[0])
         .map(result => result.transcript)
         .join('')
+
+        console.log(transcript)
 
       if(e.results[0].isFinal) {
         console.log('message: ',transcript)
@@ -168,17 +186,32 @@ class App extends Component {
 
   timeIsUp(name) {
     console.log('timer has expired:',name)
-    var audio = new Audio(alertSound)
-    audio.play()
+    const audio = new Audio(alertSound)
 
-    speak(name, this.state.voice)
-    const nextTimers = this.state.timers.filter(t => t.name !== name)
-    this.setState({
-      timers: nextTimers
-    })
+    const timer = this.state.timers.find(t => t.name === name)
+    timer.expired = true
+    timer.interval = setInterval(() => {
+      audio.play()
+      speak(name, this.state.voice)
+    }, 10000)
+    // audio.play()
+
+    // speak(name, this.state.voice)
+    // const nextTimers = this.state.timers.filter(t => t.name !== name)
+    // this.setState({
+    //   timers: nextTimers
+    // })
   }
 
-  dismissHelp() {
+
+
+  dismissHelp(permanently) {
+    if(permanently) {
+      // save to localstorage
+      const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer"))
+      const newTimerData = {...okTimerSavedData, showHelp: false}
+      window.localStorage.setItem("OkTimer", JSON.stringify(newTimerData))     
+    }
     this.setState({
       showHelp: false
     })
@@ -196,6 +229,7 @@ class App extends Component {
       .map(t => {
         if(t.name === target) {
           clearTimeout(t.timer)
+          clearInterval(t.interval)
         }
         return t
       })
@@ -255,7 +289,7 @@ class App extends Component {
           showHelp={this.showHelp}
           />
         {this.state.showHelp ? 
-          <Help okResponseMsg={this.state.okResponseMsg} dismissHelp={this.dismissHelp}/> : ''}
+          <Help okResponseMsg={this.state.okResponseMsg} dismissHelp={this.dismissHelp} dismissHelpPermanently={() => this.dismissHelp(true)}/> : ''}
         {timers}
         <NoInternet open={!this.state.isOnline} />
       </div>
