@@ -26,7 +26,7 @@ class App extends Component {
       okResponseMsg: 'OK', // {string} current response message after "okTimer"
       isOnline: true, // {bool} 
       voice: null, // {nullable string} default if null otherwise name of voice being used,
-      showHelp: true, // {bool} shows help panel
+      hideHelp: false, // {bool} shows help panel
       isAlerting: false // {bool} shows if message is currently alerting and waiting to be dismissed
     }
 
@@ -63,10 +63,10 @@ class App extends Component {
         })
       }  
 
-            // load presaved voice preference
-      if(okTimerSavedData && okTimerSavedData.showHelp === false) {
+            // load presaved showHelp preference
+      if(okTimerSavedData && okTimerSavedData.hideHelp) {
         this.setState({
-          showHelp: okTimerSavedData.showHelp
+          hideHelp: !okTimerSavedData.hideHelp
         })
       }  
 
@@ -121,7 +121,7 @@ console.log(transcript)
         [time, timeMsg] =  parseTimer (transcript)
 
         if(typeof time === 'number' && time > 0) {
-
+        console.log('valid time received at app', time)
         // disable speech recognition to avoid collision with speaking
         this.recognition.abort()
         this.recognition.removeEventListener('end', this.recognition.start)
@@ -189,11 +189,18 @@ console.log(transcript)
     const audio = new Audio(alertSound)
 
     const timer = this.state.timers.find(t => t.name === name)
+    const timers = this.state.timers.filter(t => t.name !== name)
+
     timer.expired = true
     timer.interval = setInterval(() => {
       audio.play()
       speak(name, this.state.voice)
     }, 10000)
+
+
+    this.setState({
+      timers: [...timers, timer]
+    })
     // audio.play()
 
     // speak(name, this.state.voice)
@@ -209,17 +216,17 @@ console.log(transcript)
     if(permanently) {
       // save to localstorage
       const okTimerSavedData = JSON.parse(window.localStorage.getItem("OkTimer"))
-      const newTimerData = {...okTimerSavedData, showHelp: false}
+      const newTimerData = {...okTimerSavedData, hideHelp: true}
       window.localStorage.setItem("OkTimer", JSON.stringify(newTimerData))     
     }
     this.setState({
-      showHelp: false
+      hideHelp: true
     })
   }
 
   showHelp() {
     this.setState({
-      showHelp: true
+      hideHelp: false
     })
   }
 
@@ -275,8 +282,7 @@ console.log(transcript)
       <Timer 
         key={i} 
         onClose={this.handleCloseTimer} 
-        name={t.name} 
-        timeMsg={t.timeMsg} 
+        timer={t}
         cancelTimer={() => this.handleCloseTimer(t.name)} />
       ))
 
@@ -288,8 +294,8 @@ console.log(transcript)
           handleChangeVoice={this.onChangeVoice}
           showHelp={this.showHelp}
           />
-        {this.state.showHelp ? 
-          <Help okResponseMsg={this.state.okResponseMsg} dismissHelp={this.dismissHelp} dismissHelpPermanently={() => this.dismissHelp(true)}/> : ''}
+        {this.state.hideHelp ? 
+          '' : <Help okResponseMsg={this.state.okResponseMsg} dismissHelp={this.dismissHelp} dismissHelpPermanently={() => this.dismissHelp(true)/* true:  permanent*/}/>}
         {timers}
         <NoInternet open={!this.state.isOnline} />
       </div>
