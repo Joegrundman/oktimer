@@ -279,12 +279,6 @@ class App extends Component {
 
   render() {
 
-/*const oldhelp =         {this.state.hideHelp ? 
-          '' : <Help okResponseMsg={this.state.okResponseMsg} 
-              dismissHelp={this.dismissHelp}
-              isShowing={true} 
-              dismissHelpPermanently={() => this.dismissHelp(true)}/>} */
-
     const bgCols = {
       'STATUS_STANDBY' : blue50,
       'STATUS_AWAIT_TIME' : blue100,
