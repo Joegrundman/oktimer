@@ -6,11 +6,13 @@ class Help extends Component {
 
     static propTypes = {
         okResponseMsg: PropTypes.string,
-        dismissHelp: PropTypes.func.isRequired
+        dismissHelp: PropTypes.func.isRequired,
+        isHidden: PropTypes.bool
     }
 
     static defaultProps = {
-        okResponseMsg: 'yes?'
+        okResponseMsg: 'yes?',
+        isShowing: false
     }
 
     render () {
@@ -22,7 +24,11 @@ class Help extends Component {
             paddingRight: '20px',
             margin: '0 auto',
             marginTop: '10px',
-            marginBottom: '5px'
+            marginBottom: '5px',
+            transition: '0.3s ease',
+            height: this.props.isHidden ? '0px' : '',
+            opacity: this.props.isHidden ? 0 : 1,
+            visibility: this.props.isHidden ? 'hidden' : 'visible'
         }
         return (
             <Paper style={style}>

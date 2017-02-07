@@ -12,11 +12,12 @@
     "material-ui": "^0.16.7",
     "radium": "^0.18.1",
     "react": "^15.4.2",
+    "react-addons-css-transition-group": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-tap-event-plugin": "^2.0.1"
   },
   "scripts": {
-    "prestart": "npm install", 
+    "prestart": "npm install",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

@@ -2,3 +2,21 @@
   text-align: center;
   height: 100vh;
 }
+
+.timers-enter {
+  opacity: 0.01;
+}
+
+.timers-enter.timers-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.timers-leave {
+  opacity: 1;
+}
+
+.timers-leave.timers-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}

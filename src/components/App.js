@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import Radium from 'radium'
 import { blue50, blue100, blue200, blue300, blue400 } from 'material-ui/styles/colors'
 import Timer from './Timer'
@@ -278,6 +279,12 @@ class App extends Component {
 
   render() {
 
+/*const oldhelp =         {this.state.hideHelp ? 
+          '' : <Help okResponseMsg={this.state.okResponseMsg} 
+              dismissHelp={this.dismissHelp}
+              isShowing={true} 
+              dismissHelpPermanently={() => this.dismissHelp(true)}/>} */
+
     const bgCols = {
       'STATUS_STANDBY' : blue50,
       'STATUS_AWAIT_TIME' : blue100,
@@ -315,12 +322,20 @@ class App extends Component {
           handleChangeVoice={this.onChangeVoice}
           showHelp={this.showHelp}
           />
-        {this.state.hideHelp ? 
-          '' : <Help okResponseMsg={this.state.okResponseMsg} dismissHelp={this.dismissHelp} dismissHelpPermanently={() => this.dismissHelp(true)/* true:  permanent*/}/>}
+        <Help okResponseMsg={this.state.okResponseMsg} 
+              dismissHelp={this.dismissHelp}
+              isHidden={this.state.hideHelp} 
+              dismissHelpPermanently={() => this.dismissHelp(true)/* true:  permanent*/}/>
+
         <Prompt status={this.state.status}>
           {statusMessage[this.state.status]}
         </Prompt>
+        <ReactCSSTransitionGroup
+          transitionName="timers"
+          transitionEnterTimeout={500}
+          transitionLeaveTimeout={300}>
         {timers}
+        </ReactCSSTransitionGroup>
         <NoInternet open={!this.state.isOnline} />
       </div>
     );
