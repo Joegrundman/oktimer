@@ -45,6 +45,7 @@ class App extends Component {
     this.detectOkTimer = this.detectOkTimer.bind(this)
     this.setNewOkResponse = this.setNewOkResponse.bind(this)
     this.onChangeVoice = this.onChangeVoice.bind(this)
+    this.resetOkTimer = this.resetOkTimer.bind(this)
   }
 
   componentDidMount() {
@@ -69,7 +70,7 @@ class App extends Component {
         })
       }  
 
-            // load presaved showHelp preference
+      // load presaved showHelp preference
       if(okTimerSavedData && okTimerSavedData.hideHelp) {
         this.setState({
           hideHelp: !okTimerSavedData.hideHelp
@@ -117,13 +118,25 @@ class App extends Component {
     }
   }
 
+  resetOkTimer() {
+    this.setState({status: this.STATUS.STANDBY})
+                  //reenable speech recognition after speaking finished
+    try {
+      this.recognition.addEventListener('end', this.recognition.start)
+      this.recognition.start()
+    } 
+    catch (err) {
+      console.log('attempting to reattach speech listeners failed', err)
+    }
+  }
+
   detectOkTimer(e) {
     const transcript = getTranscript(e)
 
     console.log(transcript)
       if(e.results[0].isFinal && transcript.toLowerCase() === ("ok timer")) {
           speak(this.state.okResponseMsg, this.state.voice)
-          this.resetTimer = setTimeout(() => this.setState({status: this.STATUS.STANDBY}), 60000)
+          this.resetTimer = setTimeout(this.resetOkTimer, 60000)
           this.setState({
             status: this.STATUS.AWAIT_TIME
           })
@@ -206,29 +219,25 @@ class App extends Component {
 
   timeIsUp(name) {
     console.log('timer has expired:',name)
-    // const audio = new Audio(alertSound)
-
-    const timer = this.state.timers.find(t => t.name === name)
-    const timers = this.state.timers.filter(t => t.name !== name)
-
-    timer.expired = true
-    // play once immediately
+    // play once
     this.audio.play()
     speak(name, this.state.voice)
-    
-    // time interval repeats until dismissed
-    timer.interval = setInterval(() => {
-      this.audio.play()
-      speak(name, this.state.voice)
-    }, 15000)
+    const nextTimers = this.state.timers.map(t => {
 
+      if(t.name !== name) { return t }
+        t.expired = true
+      // time interval repeats until dismissed
+      t.interval = setInterval(() => {
+        this.audio.play()
+        speak(name, this.state.voice)
+      }, 15000)    
+      return t
+    })
 
     this.setState({
-      timers: [...timers, timer]
+      timers: nextTimers
     })
   }
-
-
 
   dismissHelp(permanently) {
     if(permanently) {
