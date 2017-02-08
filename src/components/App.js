@@ -35,7 +35,7 @@ class App extends Component {
     }
 
     this.resetTimer = null // {nullable function } contains timer to reset state after 60 seconds
-
+    this.audio = null
     this.timeInterval = null;
 
     this.showHelp = this.showHelp.bind(this)
@@ -75,6 +75,9 @@ class App extends Component {
           hideHelp: !okTimerSavedData.hideHelp
         })
       }  
+
+      // initialise the audio sound
+      this.audio = new Audio(alertSound)
 
       // initialise the SpeechRecognition api
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
@@ -203,14 +206,14 @@ class App extends Component {
 
   timeIsUp(name) {
     console.log('timer has expired:',name)
-    const audio = new Audio(alertSound)
+    // const audio = new Audio(alertSound)
 
     const timer = this.state.timers.find(t => t.name === name)
     const timers = this.state.timers.filter(t => t.name !== name)
 
     timer.expired = true
     timer.interval = setInterval(() => {
-      audio.play()
+      this.audio.play()
       speak(name, this.state.voice)
     }, 15000)
 
