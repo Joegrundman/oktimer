@@ -212,6 +212,11 @@ class App extends Component {
     const timers = this.state.timers.filter(t => t.name !== name)
 
     timer.expired = true
+    // play once immediately
+    this.audio.play()
+    speak(name, this.state.voice)
+    
+    // time interval repeats until dismissed
     timer.interval = setInterval(() => {
       this.audio.play()
       speak(name, this.state.voice)
