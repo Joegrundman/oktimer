@@ -140,7 +140,7 @@ class App extends Component {
           this.setState({
             status: this.STATUS.AWAIT_TIME
           })
-      } else if (e.results[0].isFinal && transcript.toLowerCase() === ("dismiss")) {
+      } else if (e.results[0].isFinal && (transcript.toLowerCase() === ("dismiss") || transcript.toLowerCase() === ("cancel"))) {
         this.dismissExpiredTimers()
       }
   }
@@ -333,6 +333,7 @@ class App extends Component {
           handleChangeVoice={this.onChangeVoice}
           showHelp={this.showHelp}
           />
+        <div className="scrollable">
         <Help okResponseMsg={this.state.okResponseMsg} 
               dismissHelp={this.dismissHelp}
               isHidden={this.state.hideHelp} 
@@ -341,12 +342,14 @@ class App extends Component {
         <Prompt status={this.state.status}>
           {statusMessage[this.state.status]}
         </Prompt>
-        <ReactCSSTransitionGroup
-          transitionName="timers"
-          transitionEnterTimeout={500}
-          transitionLeaveTimeout={300}>
-        {timers}
-        </ReactCSSTransitionGroup>
+
+          <ReactCSSTransitionGroup
+            transitionName="timers"
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={300}>
+          {timers}
+          </ReactCSSTransitionGroup>
+        </div>
         <NoInternet open={!this.state.isOnline} />
       </div>
     );

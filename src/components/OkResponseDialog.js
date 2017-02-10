@@ -15,7 +15,7 @@ class OkResponseDialog extends Component {
 
     static defaultProps = {
         open: false,
-        defaultValue: 'yes?'
+        defaultValue: 'ok'
     }
 
     render() {

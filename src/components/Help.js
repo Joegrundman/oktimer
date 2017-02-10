@@ -23,7 +23,7 @@ class Help extends Component {
             paddingLeft: '20px',
             paddingRight: '20px',
             margin: '0 auto',
-            marginTop: '10px',
+            marginTop: this.props.isHidden ? '0px' : '10px',
             marginBottom: '5px',
             transition: '0.3s ease',
             height: this.props.isHidden ? '0px' : '',
@@ -42,7 +42,7 @@ class Help extends Component {
                 If you wish to redo the time, say "no!". Otherwise give the message you would like to receive after the time has expired.
                 </p>
                 <p>
-                When a timer reaches the end it will repeat every 15 seconds. The timer can be dismissed by pressing the button, or by calling "dismiss".
+                When a timer reaches the end it will repeat every 15 seconds. The timer can be dismissed by pressing the button, or by calling "dismiss" or "cancel".
                 </p>
                 <p>
                     This help panel can be brought back from the Options menu in the top right.
