@@ -134,7 +134,7 @@ class App extends Component {
     const transcript = getTranscript(e)
 
     console.log(transcript)
-      if(e.results[0].isFinal && transcript.toLowerCase() === ("ok timer")) {
+      if(e.results[0].isFinal && (transcript.toLowerCase() === ("ok timer") || transcript.toLowerCase() === ("okay timer"))) {
           speak(this.state.okResponseMsg, this.state.voice)
           this.resetTimer = setTimeout(this.resetOkTimer, 60000)
           this.setState({
