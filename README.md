@@ -1,4 +1,4 @@
-##OK Timer
+## OK Timer
 
 Voice activated timer app.
 
